@@ -10,4 +10,4 @@ An excel-based visualization was the starting point of this assignment.
 
 ### Plotting with ggplot2
 
-![instructor_vis.png]
+![](instructor_vis.png)
