@@ -1,0 +1,71 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library('lubridate')
+library('ggplot2') 
+library('reshape2')
+library('readxl')
+```
+
+Read in data
+```{r}
+instr = read_excel('InstructionalStaffEmployTrends.xlsx', col_names = FALSE)
+```
+
+Data tidying
+```{r}
+dates = instr[2,] %>% ymd() %>% na.omit()
+cat   = instr[5:9,1] %>% unlist()
+instr = instr[5:nrow(instr),2:ncol(instr)]
+instr = lapply(instr, as.numeric) %>% data.frame()
+instr = t(instr) %>% data.frame()
+instr['year'] = dates %>% year()
+melt_instr = melt(instr, id="year")
+```
+
+Helper function
+```{r}
+wrap = function(c, n) {
+    paste(strwrap(c, width=n), collapse = "\n")
+}
+```
+
+Plotting
+```{r}
+ggplot(melt_instr, aes(x = year, y = value, color = variable)) +
+    geom_line(size = 1.2) +
+    geom_point(size=1.8) +
+    labs(title = 'Instructor Employment Trends (1975 - 2011)',
+         x = 'Year', y = 'Percent of Total Instructional Staff') +
+    annotate('text', x = 1992, y = 35, label = wrap(cat[4], 25),
+             fontface = 2, color='#77AC30') +
+    annotate('text', x = 1995, y = 27, label = wrap(cat[1], 25),
+             fontface = 2, color='#0072C6') +
+    annotate('text', x = 1989, y = 19.5, label = wrap(cat[5], 26),
+             fontface = 2, color='#A11430') +
+    annotate('text', x = 1997, y = 17.2, label = wrap(cat[3], 25),
+             fontface = 2, color='#D95319') +
+    annotate('text', x = 2004, y = 11, label = wrap(cat[2], 25),
+             fontface = 2, color='#7D2F8D') +
+    theme(rect = element_rect(fill='#F0F0F0', colour='#F0F0F0'),
+          text = element_text(face='bold'),
+          panel.grid.major = element_line(color='gray80', size=0.6),
+          panel.grid.minor = element_blank(),
+          axis.text =  element_text(size=13),
+          axis.title = element_text(size=13),
+          plot.title = element_text(size=20),
+          axis.ticks = element_line(color='gray80'),
+          legend.position="none"
+    ) +
+    scale_color_manual(values = c('#0072C6', '#7D2F8D', '#D95319',
+                                  '#77AC30','#A11430'))
+ggsave('ggplot.png', width=8, height=6, type='cairo-png', units='in')
+```
+
