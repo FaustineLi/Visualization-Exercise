@@ -30,3 +30,5 @@ An excel-based visualization was the starting point of this assignment.
 **Problems not resolved with the new plot**
 
 * Numerical axis still does not start at zero. A tradeoff between aestetics and accuracy. 
+
+Theme inspired by 538. Colors based on MATLAB default colors. 
